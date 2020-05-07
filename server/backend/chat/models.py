@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     photo = models.ImageField(upload_to='photos', null=True, blank=True)
     rooms = models.ForeignKey(
-        'Room', verbose_name='user_rooms', on_delete=models.DO_NOTHING)
+        'Room', verbose_name='user_rooms', on_delete=models.DO_NOTHING, null=True, blank=True)
 
     class Meta:
         managed = True

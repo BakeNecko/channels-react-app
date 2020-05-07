@@ -17,19 +17,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     """
 
     # WebSocket event handlers
-
     async def connect(self):
-        """
-        Called when the websocket is handshaking as part of initial connection.
-        """
-        # Are they logged in?
-        if self.scope["user"].is_anonymous:
-            # Reject the connection
+        user = self.scope['user']
+        if user.is_anonymous:
             await self.close()
         else:
-            # Accept the connection
             await self.accept()
-        # Store which rooms the user has joined on this connection
         self.rooms = set()
 
     async def receive_json(self, content):
@@ -41,27 +34,19 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         command = content.get("command", None)
         try:
             if command == "join":
-                # Make them join the room
                 await self.join_room(content["room"])
             elif command == "leave":
-                # Leave the room
                 await self.leave_room(content["room"])
             elif command == "send":
                 await self.send_room(content["room"], content["message"])
         except ClientError as e:
-            # Catch any errors and send it back
             await self.send_json({"error": e.code})
 
     async def disconnect(self, code):
         """
         Called when the WebSocket closes for any reason.
         """
-        # Leave all the rooms we are still in
-        for room_id in list(self.rooms):
-            try:
-                await self.leave_room(room_id)
-            except ClientError:
-                pass
+        await super().disconnect(code)
 
     # Command helper methods called by receive_json
 

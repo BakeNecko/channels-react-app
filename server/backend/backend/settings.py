@@ -67,6 +67,9 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=14),
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'USER_ID_CLAIM': 'id',
 }
 
@@ -110,7 +113,7 @@ DATABASES = {
         'NAME': os.getenv('PGDATABASE', 'chat_db'),
         'USER': os.getenv('PGUSER', 'chat'),
         'PASSWORD': os.getenv('PGPASSWORD', 'chat'),
-        'HOST': os.getenv('PGHOST', 'chat-database'),
+        'HOST': os.getenv('PGHOST', 'localhost'),  # chat-database
         'PORT': os.getenv('PGPORT', '5432'),
     }
 }
