@@ -1,0 +1,68 @@
+version: "3.7"
+
+services:
+  chat-redis:
+    container_name: chat-redis
+    image: redis:5.0.7-alpine
+
+  chat-database:
+    container_name: chat-database
+    image: postgres:12.1
+    ports:
+      - 5433:5432
+    volumes:
+      - chat-database:/var/lib/postgresql/data
+
+  chat-server:
+    restart: always
+    build:
+      context: ./server
+    volumes:
+      - media:/usr/src/app/media
+      - static:/usr/src/app/static
+    command: daphne --bind 0.0.0.0 --port 8000 backend.asgi:application
+    container_name: chat-server
+    depends_on:
+      - chat-redis
+      - chat-database
+    env_file:
+      - ./server/dev.env
+    ports:
+      - 8001:8000
+
+  chat-client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    command: npm start
+    stdin_open: true
+    container_name: chat-client
+    depends_on:
+      - chat-server
+    ports:
+      - 30001:3000
+    volumes:
+      - ".:/app"
+      - "/app/node_modules"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  chat-nginx:
+    restart: always
+    build:
+      context: ./nginx
+    container_name: chat-nginx
+    depends_on:
+      - chat-server
+      - chat-client
+    ports:
+      - 8080:80
+    restart: always
+    volumes:
+      - media:/usr/src/app/media
+      - static:/usr/src/app/static
+
+volumes:
+  chat-database:
+  media:
+  static:

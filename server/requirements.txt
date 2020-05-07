@@ -1,0 +1,8 @@
+channels
+channels-redis
+Django==3.0.5
+djangorestframework
+djangorestframework-simplejwt
+Pillow
+psycopg2-binary
+pytest-asyncio

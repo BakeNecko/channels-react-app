@@ -1,0 +1,10 @@
+.DS_Store
+.dockerignore
+.gitignore
+README.md
+cypress
+cypress.json
+node_modules
+build
+Dockerfile
+Dockerfile.prod
