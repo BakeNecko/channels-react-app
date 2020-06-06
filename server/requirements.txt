@@ -1,6 +1,6 @@
 channels
 channels-redis
-Django==3.0.5
+Django==3.0.7
 djangorestframework
 djangorestframework-simplejwt
 Pillow
